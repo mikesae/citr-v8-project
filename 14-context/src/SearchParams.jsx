@@ -1,9 +1,9 @@
-import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import Results from "./Results";
-import AdoptedPetContext from "./AdoptedPetContext";
-import useBreedList from "./useBreedList";
 import fetchSearch from "./fetchSearch";
+import useBreedList from "./useBreedList";
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 
 const SearchParams = () => {
@@ -12,7 +12,14 @@ const SearchParams = () => {
     animal: "",
     breed: "",
   });
-  const [adoptedPet] = useContext(AdoptedPetContext);
+  // useSelector parameter is a subscription to state changes.
+  // Redux toolkit uses it to determine when to re-render the SearchParams component.
+  const adoptedPet = useSelector((state) => state.adoptedPet.value);
+
+  // if it were just this, SearchParams would re-render whenever anything changes in redux. This is unwanted.
+  // const store = useSelector((state) => state);
+  // const adoptedPet = state.adoptedPet.value;
+
   const [animal, setAnimal] = useState("");
   const [breeds] = useBreedList(animal);
 

@@ -1,19 +1,28 @@
-import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useState } from "react";
-import AdoptedPetContext from "./AdoptedPetContext";
-import Modal from "./Modal";
-import ErrorBoundary from "./ErrorBoundary";
-import fetchPet from "./fetchPet";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import Carousel from "./Carousel";
+import ErrorBoundary from "./ErrorBoundary";
+import Modal from "./Modal";
+import fetchPet from "./fetchPet";
+import { adopt } from "./adoptedPetSlice";
 
 const Details = () => {
   const { id } = useParams();
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const results = useQuery(["details", id], fetchPet);
-  // eslint-disable-next-line no-unused-vars
-  const [_, setAdoptedPet] = useContext(AdoptedPetContext);
+  const dispatch = useDispatch();
+
+  // Dispatch action to reducer to set the adopted pet.
+  function dispatchAdoptedPetAction(pet) {
+    const action = adopt(pet);
+    dispatch(action);
+
+    // or just
+    // dispatch(adopt(pet));
+  }
 
   if (results.isLoading) {
     return (
@@ -40,7 +49,7 @@ const Details = () => {
               <div className="buttons">
                 <button
                   onClick={() => {
-                    setAdoptedPet(pet);
+                    dispatchAdoptedPetAction(pet);
                     navigate("/");
                   }}
                 >
